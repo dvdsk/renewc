@@ -6,7 +6,7 @@ description = "Zero runtime dependencies Http01 CertBot alternative"
 license = "Apache-2.0 OR MIT"
 
 [dependencies]
-instant-acme = "0.1"
+instant-acme = "0.2"
 x509-parser = "0.14"
 tracing = { version = "0.1" }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
