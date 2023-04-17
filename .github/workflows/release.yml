@@ -63,6 +63,7 @@ jobs:
           ~/.cargo/registry/index/
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
+          setup_crosscompile
           target/
         key: ${{ runner.os }}-cargo-release3-${{ hashFiles('**/Cargo.lock') }}
     
