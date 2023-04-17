@@ -13,13 +13,6 @@ permissions:
   contents: write
 
 jobs:
-  create_tag:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "version_tag=$(cat main/Cargo.toml | grep 'version = ' | head -n 1 | cut -d \" -f 2)" >> $GITHUB_OUTPUT
-    outputs:
-      package_tag: ${{ steps.version_tag.outputs.app_version }}
-
   build_x64:
     runs-on: ubuntu-latest
     steps:
