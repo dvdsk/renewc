@@ -98,6 +98,8 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: renewc_aarch64
+    - name: find tag
+      run: echo "version_tag=$(cat main/Cargo.toml | grep 'version = ' | head -n 1 | cut -d \" -f 2)" >> $GITHUB_OUTPUT
     - name: Release
       uses: "softprops/action-gh-release@v1"
       with:
@@ -106,4 +108,4 @@ jobs:
         files: |
           renewc_x64
           renewc_aarch64
-        tag_name: ${{env.needs.create_tag.version_tag}}
+        tag_name: ${{steps.version_tag}}
