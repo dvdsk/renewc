@@ -90,6 +90,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: renewc_aarch64
+    - uses: actions/checkout@v3
     - name: find tag
       id: tag
       run: echo "version_tag=$(cat main/Cargo.toml | grep 'version = ' | head -n 1 | cut -d \" -f 2)" >> $GITHUB_OUTPUT
