@@ -80,7 +80,6 @@ jobs:
     needs: 
       - build_x64
       - build_aarch64
-      - create_tag
 
     steps:
     - name: Download x64 binary
