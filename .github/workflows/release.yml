@@ -14,12 +14,12 @@ permissions:
 
 jobs:
   create_tag:
-    - runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
     - name: get package version and tag.
       id: version_tag
       uses: dante-signal31/rust-app-version@v1.0.0
-      outputs:
+    outputs:
       package_tag: ${{ steps.version_tag.outputs.app_version }}
 
   build_x64:
