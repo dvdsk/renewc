@@ -1,0 +1,107 @@
+name: Build and Release Stable
+
+on:
+  push:
+    # complemented with branch protection on main this will 
+    # run on any pull request merge
+    branches: main 
+
+env:
+  CARGO_TERM_COLOR: always
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    - name: get package version and tag.
+      id: version_tag
+      uses: dante-signal31/rust-app-version@v1.0.0
+    outputs:
+      package_tag: ${{ steps.version_tag.outputs.app_version }}
+
+  build_x64:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        target: x86_64-unknown-linux-musl
+        toolchain: stable
+
+    - uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          target/
+        key: ${{ runner.os }}-cargo-release2-${{ hashFiles('**/Cargo.lock') }}
+
+    - uses: actions-rs/cargo@v1
+      with:
+        use-cross: false
+        command: build
+        args: --release --bin renewc
+
+    - name: Upload
+      uses: actions/upload-artifact@v3
+      with: 
+        name: renewc_x64
+        path: target/release/renewc
+
+
+  build_aarch64:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        target: aarch64-unknown-linux-musl
+        toolchain: stable
+
+    - uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          target/
+        key: ${{ runner.os }}-cargo-release2-${{ hashFiles('**/Cargo.lock') }}
+    
+    - name: crosscompile 
+      run: bash setup_crosscompile
+
+    - name: Upload
+      uses: actions/upload-artifact@v3
+      with: 
+        name: renewc_aarch64
+        path: target/aarch64-unknown-linux-musl/release/renewc
+
+  release_x64:
+    runs-on: ubuntu-latest
+    needs: build_x64
+    needs: build_aarch64
+
+    steps:
+    - name: Download x64 binary
+      uses: actions/download-artifact@v3
+      with:
+        name: renewc_x64
+    - name: Download arm binary
+      uses: actions/download-artifact@v3
+      with:
+        name: renewc_aarch64
+    - name: Release
+      uses: "softprops/action-gh-release@v1"
+      with:
+        prerelease: true
+        name: "x86/x64 binary"
+        files: |
+          renewc_x64
+          renewc_aarch64
+        tag_name: ${{needs.build.outputs.package_tag}}
