@@ -16,11 +16,7 @@ jobs:
   create_tag:
     runs-on: ubuntu-latest
     steps:
-    - name: get package version and tag.
-      id: version_tag
-      uses: dante-signal31/rust-app-version@v1.0.0
-      with: 
-        cargo_toml_folder: main
+      - run: echo "version_tag=$(cat main/Cargo.toml | grep 'version = ' | head -n 1 | cut -d \" -f 2)" >> $GITHUB_OUTPUT
     outputs:
       package_tag: ${{ steps.version_tag.outputs.app_version }}
 
@@ -110,4 +106,4 @@ jobs:
         files: |
           renewc_x64
           renewc_aarch64
-        tag_name: ${{needs.create_tag.outputs.package_tag}}
+        tag_name: ${{env.needs.create_tag.version_tag}}
