@@ -64,7 +64,7 @@ jobs:
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
           target/
-        key: ${{ runner.os }}-cargo-release2-${{ hashFiles('**/Cargo.lock') }}
+        key: ${{ runner.os }}-cargo-release3-${{ hashFiles('**/Cargo.lock') }}
     
     - name: crosscompile 
       run: bash crosscompile.sh
