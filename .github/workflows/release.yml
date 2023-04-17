@@ -19,6 +19,8 @@ jobs:
     - name: get package version and tag.
       id: version_tag
       uses: dante-signal31/rust-app-version@v1.0.0
+      with: 
+        cargo_toml_folder: main
     outputs:
       package_tag: ${{ steps.version_tag.outputs.app_version }}
 
