@@ -13,7 +13,7 @@ permissions:
   contents: write
 
 jobs:
-  tag:
+  create_tag:
     - name: get package version and tag.
       id: version_tag
       uses: dante-signal31/rust-app-version@v1.0.0
