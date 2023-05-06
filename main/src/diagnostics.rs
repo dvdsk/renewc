@@ -10,7 +10,7 @@ pub use applications::Config;
 
 use crate::config;
 
-fn root() -> bool {
+pub fn root() -> bool {
     use libproc::libproc::proc_pid;
     proc_pid::am_root()
 }

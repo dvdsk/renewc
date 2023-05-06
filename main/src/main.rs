@@ -50,10 +50,10 @@ async fn main() -> eyre::Result<()> {
             if !args.run.production {
                 warn!("Installing service that runs against staging-environment, certificates will not be valid");
             }
-            install::perform(args).wrap_err("failed to install")?;
+            install::place(&mut stdout, args).wrap_err("failed to install")?;
         }
-        Commands::Uninstall => {
-            install::undo().wrap_err("failed to uninstall")?;
+        Commands::Uninstall { target } => {
+            install::remove(target).wrap_err("failed to uninstall")?;
         }
     }
     Ok(())

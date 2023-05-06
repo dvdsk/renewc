@@ -8,6 +8,23 @@ use self::args::RenewArgs;
 mod args;
 pub use args::{Commands, InstallArgs, OutputConfig};
 
+#[derive(clap::ValueEnum, Debug, Clone, Default)]
+pub enum UninstallTarget {
+    /// Uninstall any system install, will need sudo.
+    System,
+    /// Uninstall a user install. Only removes installs
+    /// by the current user. Does not require sudo.
+    Local,
+    /// Uninstall any installs. Even user installs by 
+    /// other users.
+    All,
+    /// Detect user installs by the current user and
+    /// and system installs. If both are present ask
+    /// the user for input.
+    #[default]
+    Ask,
+}
+
 #[derive(clap::ValueEnum, Debug, Clone, Default, PartialEq, Eq)]
 /// How to store the output.
 ///
@@ -84,7 +101,7 @@ impl From<RenewArgs> for Config {
     }
 }
 
-// TODO: dont pass outputconfig to 
+// TODO: dont pass outputconfig to
 // run/renew only to store on disk function <03-05-23, dvdsk>
 impl args::OutputConfig {
     fn test() -> Self {

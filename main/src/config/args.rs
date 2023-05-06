@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
-use time::macros::format_description;
 use std::path::PathBuf;
 use std::str::FromStr;
+use time::macros::format_description;
 
 use super::Output;
 
@@ -12,7 +12,7 @@ pub enum Commands {
     /// Create and enable renew-certs system service.
     Install(InstallArgs),
     /// Disable and remove renew-certs system service.
-    Uninstall,
+    Uninstall { target: super::UninstallTarget },
 }
 
 impl Commands {
@@ -21,11 +21,12 @@ impl Commands {
         match self {
             Commands::Run(args) => args.debug,
             Commands::Install(args) => args.run.debug,
-            Commands::Uninstall => false,
+            Commands::Uninstall { .. } => false,
         }
     }
 }
 
+// newtype needed to implement FromStr for Time::time
 #[derive(Debug, Clone)]
 pub struct Time(pub time::Time);
 
@@ -44,9 +45,14 @@ pub struct InstallArgs {
     #[clap(long, default_value = "04:00")]
     pub(crate) time: Time,
 
-    /// where to install the binary
-    #[clap(long, default_value = "04:00")]
-    pub(crate) location: Option<PathBuf>,
+    /// Optional, not recommended: install to a
+    /// non standard directory
+    #[clap(long)]
+    pub(crate) dir: Option<PathBuf>,
+
+    /// Optional, force a system global install
+    #[clap(long)]
+    pub(crate) global: bool,
 
     #[clap(flatten)]
     pub run: RenewArgs,
@@ -116,9 +122,9 @@ pub struct OutputConfig {
 
     /// Path including file name where to output the certificates
     /// private key. Used when it is stored seperate from the other
-    /// output. 
+    /// output.
     ///
-    /// If left unspecified this will default to the 
+    /// If left unspecified this will default to the
     /// certificate-path's dir and the file name will be the shortest
     /// part of the domain(s).
     ///
@@ -130,7 +136,7 @@ pub struct OutputConfig {
     /// Used when it is stored seperate from the other output. If left
     /// unspecified it is deduced from the certificate-path.
     ///
-    /// If left unspecified this will default to the 
+    /// If left unspecified this will default to the
     /// certificate-path's dir and the file name will be the shortest
     /// part of the domain(s).
     ///
