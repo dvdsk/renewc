@@ -37,7 +37,7 @@ rand = "0.8"
 # supports-color feature ends up enabling atty which has a RUSTSEC 
 # advisory against it. For now colors will ben enabled always.
 # owo-colors = { version = "3.5", features = ["supports-colors"] }
-owo-colors = { version = "3.5" }
+owo-colors = { version = "4.0" }
 yasna = "0.5"
 async-trait = "0.1"
 data-encoding = "2.5"
