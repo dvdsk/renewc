@@ -29,7 +29,7 @@ color-eyre = "0.6"
 time = { version = "0.3", features = ["rand", "parsing"] }
 netstat2 = "0.9"
 libproc = "0.14"
-hyper = { version = "0.14", features = ["client"] }
+hyper = { version = "1.0", features = ["client"] }
 itertools = "0.12"
 
 haproxy-config = "0.4"
