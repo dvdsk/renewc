@@ -1901,7 +1901,7 @@ checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
 
 [[package]]
 name = "renewc"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "axum",
  "clap",
@@ -2229,9 +2229,9 @@ dependencies = [
 
 [[package]]
 name = "service-install"
-version = "0.4.5"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7bf5364cb64f59f5f3c03cb10405a0958d19e1d8d680959af039a133a103244"
+checksum = "d07e61706c952629c2248919a7a20df4fb83fb18ca8105d59da7c9ef6d407b7b"
 dependencies = [
  "dialoguer",
  "home",
