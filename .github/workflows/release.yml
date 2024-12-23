@@ -77,14 +77,12 @@ jobs:
         mv ${{ matrix.target }}/renewc renewc_$suffix
     - name: changelog as release body
       run: cat CHANGELOG.md | awk '/^## /{if (++c == 2) {exit}} c == 1' | tail -n +2 > ${{ github.workspace }}-CHANGELOG.txt
-    - name: Release
-      uses: "softprops/action-gh-release@v2"
+    - name: Run gh release
       env:
-        VERSION: ${{ steps.tag.outputs.VERSION }}
-      with:
-        body_path: ${{ github.workspace }}CHANGELOG.txt
-        prerelease: false
-        name: Release ${{ steps.tag.outputs.VERSION }}
-        files: |
-          renewc_*
-        tag_name: ${{ steps.tag.outputs.VERSION }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      shell: bash
+      run: |
+        CHANGES=`cat CHANGELOG.md | awk '/^## /{if (++c == 3) exit}; {if (c>1) print}'`
+        VERSION=`grep '^version =' renewc/Cargo.toml | head -n 1 | awk '{print $3}' | tr -d '"' | tr -d "\n"`
+        TAG=`echo release-$VERSION`
+        gh release create $TAG --notes "$CHANGES" --title "Release $VERSION" renewc_*
