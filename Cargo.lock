@@ -244,7 +244,7 @@ dependencies = [
  "bitflags 2.6.0",
  "cexpr",
  "clang-sys",
- "itertools 0.13.0",
+ "itertools 0.10.5",
  "proc-macro2",
  "quote",
  "regex",
@@ -262,7 +262,7 @@ dependencies = [
  "bitflags 2.6.0",
  "cexpr",
  "clang-sys",
- "itertools 0.13.0",
+ "itertools 0.10.5",
  "log",
  "prettyplease",
  "proc-macro2",
@@ -1129,9 +1129,9 @@ dependencies = [
 
 [[package]]
 name = "itertools"
-version = "0.13.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
+checksum = "2b192c782037fadd9cfa75548310488aabdbf3d2da73885b31bd0abd03351285"
 dependencies = [
  "either",
 ]
@@ -1881,7 +1881,7 @@ dependencies = [
  "data-encoding",
  "haproxy-config",
  "instant-acme",
- "itertools 0.13.0",
+ "itertools 0.14.0",
  "libproc",
  "local-ip-address",
  "log",
@@ -1912,7 +1912,7 @@ version = "0.1.0"
 dependencies = [
  "color-eyre",
  "fork",
- "itertools 0.13.0",
+ "itertools 0.14.0",
  "libc",
  "pem",
  "proctitle",
