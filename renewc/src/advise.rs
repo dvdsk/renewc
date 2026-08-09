@@ -4,7 +4,7 @@ use std::io::Write;
 use cert::info::Info;
 use itertools::Itertools;
 
-use crate::cert::info::{CertSource, ShouldRenew};
+use crate::cert::info::{CertSource, WithinRenewalPeriod};
 use crate::config::{RenewEarly, ReplaceProd, RequestTo};
 use crate::{Config, cert};
 
@@ -73,6 +73,8 @@ impl CheckResult {
 pub fn given_existing(config: &Config, existing: Info, stdout: &mut impl Write) -> CheckResult {
     let new_domains: HashSet<_> = config.domains.iter().collect();
     let prev_domains: HashSet<_> = existing.domains.iter().collect();
+    let added = new_domains.difference(&prev_domains).map(|s| s.as_str());
+    let added: String = Itertools::intersperse_with(added, || "\n\t-").collect();
     let missing = prev_domains.difference(&new_domains).map(|s| s.as_str());
     let n_missing = missing.clone().count();
     let missing: String = Itertools::intersperse_with(missing, || "\n\t-").collect();
@@ -95,7 +97,7 @@ pub fn given_existing(config: &Config, existing: Info, stdout: &mut impl Write) 
     match (
         config.request_to,
         existing.from,
-        existing.should_renew(),
+        existing.within_renewal_period(),
     ) {
         (RequestTo::Staging, CertSource::Staging, _) => {
             CheckResult::accept("Requesting staging cert, certificates will not be valid")
@@ -117,26 +119,28 @@ pub fn given_existing(config: &Config, existing: Info, stdout: &mut impl Write) 
         (RequestTo::Production, CertSource::Staging, _) => {
             CheckResult::accept("Requesting production cert, existing certificate is staging")
         }
-        (RequestTo::Production, CertSource::Production, ShouldRenew::Yes) => {
-            if existing.is_expired() {
-                CheckResult::Accept {
-                    status: format!(
-                        "Renewing production cert: existing certificate expired {} days, {} hours ago",
-                        existing.since_expired().whole_days(),
-                        existing.since_expired().whole_hours() % 24
-                    ),
-                }
+        (RequestTo::Production, CertSource::Production, WithinRenewalPeriod::Yes) => {
+            let mut status = if existing.is_expired() {
+                format!(
+                    "Renewing production cert: existing certificate expired {} days, {} hours ago",
+                    existing.since_expired().whole_days(),
+                    existing.since_expired().whole_hours() % 24
+                )
             } else {
-                let status = format!(
+                format!(
                     "Renewing production cert: existing certificate expires soon: {} days, {} hours",
                     existing.expires_in.whole_days(),
                     existing.expires_in.whole_hours() % 24
-                );
-
-                CheckResult::accept(status)
+                )
+            };
+            if !added.is_empty() {
+                status += &format!("Note, domains were added: {added}");
             }
+            CheckResult::accept(status)
         }
-        (RequestTo::Production, CertSource::Production, ShouldRenew::No) => {
+        (RequestTo::Production, CertSource::Production, WithinRenewalPeriod::No)
+            if added.is_empty() =>
+        {
             let status = format!(
                 "Production cert not yet due for renewal expires in: {} days, {} hours",
                 existing.expires_in.whole_days(),
@@ -150,6 +154,11 @@ pub fn given_existing(config: &Config, existing: Info, stdout: &mut impl Write) 
                     "Quitting, you can force renewal using --renew-early",
                 )
             }
+        }
+        (RequestTo::Production, CertSource::Production, WithinRenewalPeriod::No) => {
+            CheckResult::accept(format!(
+                "Production cert renewing since these domains were added: {added}"
+            ))
         }
     }
 }

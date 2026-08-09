@@ -55,11 +55,11 @@ impl Info {
     }
 
     #[instrument(ret, skip(self))]
-    pub(crate) fn should_renew(&self) -> ShouldRenew {
+    pub(crate) fn within_renewal_period(&self) -> WithinRenewalPeriod {
         if self.expires_in < self.renew_period() {
-            ShouldRenew::Yes
+            WithinRenewalPeriod::Yes
         } else {
-            ShouldRenew::No
+            WithinRenewalPeriod::No
         }
     }
 
@@ -70,7 +70,7 @@ impl Info {
 }
 
 #[derive(Debug, Clone, Copy)]
-pub enum ShouldRenew {
+pub enum WithinRenewalPeriod {
     Yes,
     No,
 }
